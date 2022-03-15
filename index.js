@@ -1,37 +1,17 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
 const mongoose = require('mongoose')
 morgan.token('body', (request) => JSON.stringify(request.body))
-const url =
-  `mongodb+srv://Manu-sing:Manu831gallo@cluster0.ru6ma.mongodb.net/blog-list?retryWrites=true&w=majority`
+const Blog = require('./models/blog')
 
 
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(cors())
 app.use(express.static('build'))
-
-mongoose.connect(url)
-
-const blogSchema = new mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: String,
-  status: String
-})
-
-blogSchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-      returnedObject.id = returnedObject._id.toString()
-      delete returnedObject._id
-      delete returnedObject.__v
-    }
-  })
-
-const Blog = mongoose.model('Blog', blogSchema)
 
 
 // let blogs = [
@@ -79,54 +59,77 @@ app.get('/api/blogs', (request, response) => {
     })
   })
 
-app.get('/api/blogs/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const blog = blogs.find(blog => blog.id === id)
-    if (blog) {
+app.get('/api/blogs/:id', (request, response, next) => {
+    Blog.findById(request.params.id)
+    .then(blog => {
+      if (blog) {
         response.json(blog)
       } else {
         response.status(404).end()
       }
+    })
+    .catch(error => next(error))
   })
 
-app.delete('/api/blogs/:id', (request, response) => {
-    const id = Number(request.params.id)
-    blogs = blogs.filter(blog => blog.id !== id)
-  
-    response.status(204).end()
+app.delete('/api/blogs/:id', (request, response, next) => {
+    Blog.findByIdAndRemove(request.params.id)
+      .then(result => {
+        response.status(204).end()
+      })
+      .catch(error => next(error))
   })
 
-  const generateId = () => {
-    const maxId = blogs.length > 0
-      ? Math.max(...blogs.map(n => n.id))
-      : 0
-    return maxId + 1
-  }
-  
 app.post('/api/blogs', (request, response) => {
     const body = request.body
   
     if (!body.title || !body.author || !body.url) {
-      return response.status(400).json({ 
-        error: "The fields 'title', 'author' and 'url' must be provided" 
-      })
+      return response.status(400).json({ error: "The fields 'title', 'author' and 'link' must be provided" })
     }
+  
+    const blog = new Blog({
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes,
+      status: body.status
+    })
+  
+    blog.save().then(savedBlog => {
+      response.json(savedBlog)
+    })
+  })
+
+app.put('/api/blogs/:id', (request, response, next) => {
+    const body = request.body
   
     const blog = {
       title: body.title,
       author: body.author,
       url: body.url,
       likes: body.likes,
-      status: body.status,
-      id: generateId(),
+      status: body.status
     }
   
-    blogs = blogs.concat(blog)
-  
-    response.json(blog)
+    Blog.findByIdAndUpdate(request.params.id, blog, { new: body.status })
+      .then(updatedBlog => {
+        response.json(updatedBlog)
+      })
+      .catch(error => next(error))
   })
 
-const PORT = process.env.PORT || 3003
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+  
+    if (error.name === 'CastError') {
+      return response.status(400).send({ error: 'malformatted id' })
+    } 
+  
+    next(error)
+  }
+
+app.use(errorHandler)
+
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
