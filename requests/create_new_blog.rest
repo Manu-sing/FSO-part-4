@@ -1,0 +1,10 @@
+post http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Lyft, Uber add surcharge due to high gas prices",
+    "author": "Rebecca Bellan",
+    "url": "https://techcrunch.com/2022/03/14/lyft-uber-add-surcharge-due-to-high-gas-prices/",
+    "likes": 45,
+    "status": "Read"
+}
