@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
     title: String,
     author: String,
     url: String,
-    likes: String,
+    likes: Number,
     status: String
   })
   
