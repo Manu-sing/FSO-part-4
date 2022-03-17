@@ -6,7 +6,11 @@ const mongoose = require('mongoose')
     author: String,
     url: String,
     likes: Number,
-    status: String
+    status: String,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
   })
   
   blogSchema.set('toJSON', {

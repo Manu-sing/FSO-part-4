@@ -1,10 +1,11 @@
 post http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hbnVzaW5nIiwiaWQiOiI2MjMyOTM2Y2VlM2U2ZWY3YTE0ZjJmNWUiLCJpYXQiOjE2NDc0ODU1MjN9.r_FaedgLOaUOJOLU5d7TKbZxEwh9c3d4JVnKPbjJjyc
 
 {
-    "title": "Lyft, Uber add surcharge due to high gas prices",
-    "author": "Rebecca Bellan",
-    "url": "https://techcrunch.com/2022/03/14/lyft-uber-add-surcharge-due-to-high-gas-prices/",
-    "likes": 45,
-    "status": "Read"
+    "title": "Ukraine’s president just signed a law to legalize crypto, as digital donations roll in",
+    "author": "Connie Loizos",
+    "url": "https://techcrunch.com/2022/03/16/ukraines-president-just-signed-a-law-to-legalize-crypto-as-digital-donations-roll-in/",
+    "likes": 300,
+    "status": "Non Read"
 }
