@@ -7,6 +7,7 @@ usersRouter.get('/', async (request, response) => {
     response.json(users)
   })
 
+// login
 usersRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body
 
@@ -22,10 +23,6 @@ usersRouter.post('/', async (request, response) => {
   } else if (!username) {
     return response.status(400).json({
       error: 'username must be provided'
-    })
-  } else if (!password) {
-    return response.status(400).json({
-      error: 'password must be provided'
     })
   } else if (password.length < 3) {
     return response.status(400).json({
@@ -51,5 +48,7 @@ usersRouter.post('/', async (request, response) => {
 
   response.status(201).json(savedUser)
 })
+
+
 
 module.exports = usersRouter
